@@ -6,14 +6,17 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/aidanjjenkins/windb/cmds"
 )
 
 func TableCheck() {
-	dir := "tables"
-	file := "tables.json"
+	dir := "db"
+	info := "info"
+	file := "tableInfo.json"
+	tablesDir := "tables"
 
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		if err := os.Mkdir(dir, os.ModePerm); err != nil {
@@ -21,7 +24,19 @@ func TableCheck() {
 		}
 	}
 
-	filePath := dir + "/" + file
+	if _, err := os.Stat(dir + "/" + info); os.IsNotExist(err) {
+		if err := os.Mkdir(dir+"/"+info, os.ModePerm); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if _, err := os.Stat(dir + "/" + tablesDir); os.IsNotExist(err) {
+		if err := os.Mkdir(dir+"/"+tablesDir, os.ModePerm); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	filePath := dir + "/" + info + "/" + file
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		fileHandle, err := os.Create(filePath)
@@ -67,6 +82,7 @@ func main() {
 			}
 
 			table := cmds.NewTable(tN)
+			table.AddCol("id")
 
 			for adding {
 				var cN string
@@ -79,7 +95,7 @@ func main() {
 				}
 				table.AddCol(cN)
 			}
-			err = cmds.WriteTable(&table, "./tables/tables.json")
+			err = cmds.WriteTable(&table, "./db/info/tableInfo.json")
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -91,11 +107,11 @@ func main() {
 			fmt.Print("Enter name of table to insert into: ")
 			scanner.Scan()
 			tName = scanner.Text()
-			fileName := fmt.Sprintf("./tables/%s.json", tName)
+			fileName := fmt.Sprintf("./db/tables/%s.json", tName)
 
 			var values []string
 
-			columns, err := cmds.InsertSetUp(tName, "./tables/tables.json")
+			columns, err := cmds.InsertSetUp(tName, "./db/info/tableInfo.json")
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -112,6 +128,11 @@ func main() {
 			}
 
 			for _, c := range columns {
+				if c == "id" {
+					idx := cmds.GenId()
+					values = append(values, strconv.Itoa(idx))
+					continue
+				}
 				inputFormat := fmt.Sprintf("Enter %s: ", c)
 
 				var input string
@@ -121,9 +142,9 @@ func main() {
 				input = scanner.Text()
 
 				values = append(values, input)
-
 			}
 
+			// fmt.Println(values)
 			cmds.Insert(tName, columns, values)
 		} else {
 			badInput := strings.ToLower(input)

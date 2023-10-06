@@ -60,7 +60,7 @@ func CreateTableFile(name string) error {
 		return err
 
 	}
-	fileName := fmt.Sprintf("./tables/%s.json", name)
+	fileName := fmt.Sprintf("./db/tables/%s.json", name)
 
 	file, err := os.Create(fileName)
 	if err != nil {

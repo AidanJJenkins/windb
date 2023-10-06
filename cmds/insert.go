@@ -3,21 +3,23 @@ package cmds
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 )
 
 // this should eventually check the index to make sure there are no repeats
-// func GenId() int {
-// id := rand.Intn(99999)
-// check := tree.Find(id)
-// if check != false {
-// 	return GenId(tree)
-// }
-// return id
-// }
+func GenId() int {
+	id := rand.Intn(99999)
+	// check := tree.Find(id)
+	//
+	//	if check != false {
+	//		return GenId(tree)
+	//	}
+	return id
+}
 
 func Insert(tableName string, columns []string, cData []string) error {
-	fileName := fmt.Sprintf("./tables/%s.json", tableName)
+	fileName := fmt.Sprintf("./db/tables/%s.json", tableName)
 	fileData, err := os.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -34,8 +36,6 @@ func Insert(tableName string, columns []string, cData []string) error {
 	for i := 0; i < len(columns); i++ {
 		entry[columns[i]] = cData[i]
 	}
-	// gI := GenId()
-	// entry["id"] = strconv.Itoa(gI)
 
 	data = append(data, entry)
 
