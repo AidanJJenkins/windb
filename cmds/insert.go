@@ -19,7 +19,7 @@ func GenId() int {
 }
 
 func Insert(tableName string, columns []string, cData []string) error {
-	fileName := fmt.Sprintf("./db/tables/%s.json", tableName)
+	fileName := fmt.Sprintf("./db/tables/%s/%s.json", tableName, tableName)
 	fileData, err := os.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(err)

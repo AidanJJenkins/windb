@@ -60,19 +60,50 @@ func CreateTableFile(name string) error {
 		return err
 
 	}
-	fileName := fmt.Sprintf("./db/tables/%s.json", name)
 
-	file, err := os.Create(fileName)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return err
+	fileName := fmt.Sprintf("./db/tables/%s/%s.json", name, name)
+	cacheName := fmt.Sprintf("./db/tables/%s/%sCache.json", name, name)
+	indexName := fmt.Sprintf("./db/tables/%s/%sIndex.json", name, name)
+	names := []string{fileName, cacheName, indexName}
+
+	for _, name := range names {
+		file, err := os.Create(name)
+		if err != nil {
+			fmt.Println("Error creating file:", err)
+			return err
+		}
+		defer file.Close()
+
+		_, err = file.Write(jsonString)
+		if err != nil {
+			fmt.Println("Error writing to file:", err)
+			return err
+		}
+
 	}
-	defer file.Close()
+	// file, err := os.Create(fileName)
+	// if err != nil {
+	// 	fmt.Println("Error creating file:", err)
+	// 	return err
+	// }
+	// defer file.Close()
+	//
+	// _, err = file.Write(jsonString)
+	// if err != nil {
+	// 	fmt.Println("Error writing to file:", err)
+	// 	return err
+	// }
 
-	_, err = file.Write(jsonString)
-	if err != nil {
-		fmt.Println("Error writing to file:", err)
-		return err
+	return nil
+}
+
+func CreateTableDir(dir string) error {
+	fullPath := "./db/tables/" + dir
+
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(fullPath, os.ModePerm); err != nil {
+			return err
+		}
 	}
 
 	return nil

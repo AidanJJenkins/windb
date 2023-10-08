@@ -76,7 +76,11 @@ func main() {
 			scanner.Scan()
 			tN = scanner.Text()
 
-			err := cmds.CreateTableFile(tN)
+			err := cmds.CreateTableDir(tN)
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = cmds.CreateTableFile(tN)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -107,7 +111,7 @@ func main() {
 			fmt.Print("Enter name of table to insert into: ")
 			scanner.Scan()
 			tName = scanner.Text()
-			fileName := fmt.Sprintf("./db/tables/%s.json", tName)
+			fileName := fmt.Sprintf("./db/tables/%s/%s.json", tName, tName)
 
 			var values []string
 
