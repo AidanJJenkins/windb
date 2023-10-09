@@ -18,26 +18,20 @@ func GenId() int {
 	return id
 }
 
-func Insert(tableName string, columns []string, cData []string) error {
-	fileName := fmt.Sprintf("./db/tables/%s/%s.json", tableName, tableName)
+func InsertIntoIndex(name string, id int, index int) error {
+	fileName := fmt.Sprintf("./db/tables/%s/%sIndex.json", name, name)
 	fileData, err := os.ReadFile(fileName)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
-
-	var data []map[string]string
+	var data map[int]int
 
 	err = json.Unmarshal(fileData, &data)
 	if err != nil {
 		return err
 	}
 
-	entry := make(map[string]string)
-	for i := 0; i < len(columns); i++ {
-		entry[columns[i]] = cData[i]
-	}
-
-	data = append(data, entry)
+	data[id] = index
 
 	updatedJSON, err := json.Marshal(data)
 	if err != nil {
@@ -50,8 +44,47 @@ func Insert(tableName string, columns []string, cData []string) error {
 		fmt.Println("Error writing file:", err)
 		return err
 	}
+	fmt.Println("index in the json: ", index)
 
 	return nil
+}
+
+func Insert(tableName string, columns []string, cData []string) (int, error) {
+	fileName := fmt.Sprintf("./db/tables/%s/%s.json", tableName, tableName)
+	fileData, err := os.ReadFile(fileName)
+	if err != nil {
+		return -1, err
+	}
+
+	var data []map[string]string
+
+	err = json.Unmarshal(fileData, &data)
+	if err != nil {
+		return -1, err
+	}
+
+	indexInData := len(data)
+
+	entry := make(map[string]string)
+	for i := 0; i < len(columns); i++ {
+		entry[columns[i]] = cData[i]
+	}
+
+	data = append(data, entry)
+
+	updatedJSON, err := json.Marshal(data)
+	if err != nil {
+		fmt.Println("Error marshaling JSON:", err)
+		return -1, err
+	}
+
+	err = os.WriteFile(fileName, updatedJSON, 0644)
+	if err != nil {
+		fmt.Println("Error writing file:", err)
+		return -1, err
+	}
+
+	return indexInData, nil
 }
 
 // get columns associated with the table

@@ -125,15 +125,18 @@ func main() {
 				fmt.Println(err)
 			}
 
-			var data [][]map[string]string
+			var data []map[string]string
 			err = json.Unmarshal(fileData, &data)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("here>: ", err)
 			}
+
+			var rowId int
 
 			for _, c := range columns {
 				if c == "id" {
 					idx := cmds.GenId()
+					rowId = idx
 					values = append(values, strconv.Itoa(idx))
 					continue
 				}
@@ -148,8 +151,46 @@ func main() {
 				values = append(values, input)
 			}
 
-			// fmt.Println(values)
-			cmds.Insert(tName, columns, values)
+			fmt.Println(values)
+			index, err := cmds.Insert(tName, columns, values)
+			cmds.InsertIntoIndex(tName, rowId, index)
+		} else if strings.ToLower(input) == "search" {
+			var tableName, colName, needle string
+
+			fmt.Print("Enter name of table to search: ")
+			scanner.Scan()
+			tableName = scanner.Text()
+
+			fmt.Print("Enter name of column to search: ")
+			scanner.Scan()
+			colName = scanner.Text()
+
+			fmt.Print("Enter target to search for: ")
+			scanner.Scan()
+			needle = scanner.Text()
+
+			searchRes := cmds.GeneralSearch(tableName, colName, needle)
+			fmt.Println(searchRes)
+
+		} else if strings.ToLower(input) == "id" {
+			var tableName, id string
+
+			fmt.Print("Enter name of table to search: ")
+			scanner.Scan()
+			tableName = scanner.Text()
+
+			fmt.Print("Enter id to search: ")
+			scanner.Scan()
+			id = scanner.Text()
+
+			convId, err := strconv.Atoi(id)
+			if err != nil {
+				fmt.Println("Can't convert this to an int!")
+			} else {
+			}
+
+			searchRes := cmds.GetFromIndex(tableName, convId)
+			fmt.Println(searchRes)
 		} else {
 			badInput := strings.ToLower(input)
 			fmt.Printf("'%s' is not a valid command, please retry\n", badInput)
