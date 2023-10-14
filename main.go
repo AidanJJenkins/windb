@@ -170,7 +170,7 @@ func main() {
 			needle = scanner.Text()
 
 			searchRes := cmds.GeneralSearch(tableName, colName, needle)
-			fmt.Println(searchRes)
+			cmds.PrettyPrint(searchRes)
 
 		} else if strings.ToLower(input) == "id" {
 			var tableName, id string

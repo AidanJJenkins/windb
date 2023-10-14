@@ -24,16 +24,24 @@ func InsertIntoIndex(name string, id int, index int) error {
 	if err != nil {
 		return err
 	}
-	var data map[int]int
+	var indexArr []map[int]int
 
-	err = json.Unmarshal(fileData, &data)
+	err = json.Unmarshal(fileData, &indexArr)
 	if err != nil {
 		return err
 	}
+	if len(indexArr) == 0 {
+		indexArr = append(indexArr, make(map[int]int))
+	}
 
+	data := indexArr[0]
 	data[id] = index
 
-	updatedJSON, err := json.Marshal(data)
+	// data := indexArr[0]
+	// data[id] = index
+
+	// updatedJSON, err := json.Marshal(data)
+	updatedJSON, err := json.Marshal(indexArr)
 	if err != nil {
 		fmt.Println("Error marshaling JSON:", err)
 		return err

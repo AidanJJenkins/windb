@@ -53,7 +53,6 @@ func WriteTable(table *Table, filename string) error {
 
 func CreateTableFile(name string) error {
 	jsonArray := []map[string]interface{}{}
-	jsonMap := map[string]int{}
 
 	jsonString, err := json.Marshal(jsonArray)
 	if err != nil {
@@ -62,7 +61,6 @@ func CreateTableFile(name string) error {
 
 	}
 
-	jMap, err := json.Marshal(jsonMap)
 	if err != nil {
 		fmt.Println("Error marshaling JSON:", err)
 		return err
@@ -75,32 +73,17 @@ func CreateTableFile(name string) error {
 	names := []string{fileName, cacheName, indexName}
 
 	for _, name := range names {
-		if name == "indexName" {
-			file, err := os.Create(name)
-			if err != nil {
-				fmt.Println("Error creating file:", err)
-				return err
-			}
-			defer file.Close()
+		file, err := os.Create(name)
+		if err != nil {
+			fmt.Println("Error creating file:", err)
+			return err
+		}
+		defer file.Close()
 
-			_, err = file.Write(jMap)
-			if err != nil {
-				fmt.Println("Error writing to file:", err)
-				return err
-			}
-		} else {
-			file, err := os.Create(name)
-			if err != nil {
-				fmt.Println("Error creating file:", err)
-				return err
-			}
-			defer file.Close()
-
-			_, err = file.Write(jsonString)
-			if err != nil {
-				fmt.Println("Error writing to file:", err)
-				return err
-			}
+		_, err = file.Write(jsonString)
+		if err != nil {
+			fmt.Println("Error writing to file:", err)
+			return err
 		}
 	}
 	return nil

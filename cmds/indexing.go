@@ -14,13 +14,17 @@ func GetFromIndex(tableName string, id int) string {
 		return fmt.Sprintf("Error reading index file: %v", err)
 	}
 
-	var indexDataMap map[string]int
-	err = json.Unmarshal(indexData, &indexDataMap)
+	var indexDataArray []map[string]int
+	err = json.Unmarshal(indexData, &indexDataArray)
 	if err != nil {
 		return fmt.Sprintf("Error parsing index data: %v", err)
 	}
 
-	index := indexDataMap[strconv.Itoa(id)]
+	if len(indexDataArray) == 0 {
+		return "Empty index data"
+	}
+
+	index := indexDataArray[0][strconv.Itoa(id)]
 
 	tableFile := fmt.Sprintf("./db/tables/%s/%s.json", tableName, tableName)
 	tableData, err := os.ReadFile(tableFile)
@@ -34,8 +38,11 @@ func GetFromIndex(tableName string, id int) string {
 		return fmt.Sprintf("Error parsing table data: %v", err)
 	}
 
-	// index, err := strconv.Atoi(location)
-	if err != nil {
+	if len(indexDataArray) == 0 {
+		return "Empty index data"
+	}
+
+	if index < 0 || index >= len(tableDataArray) {
 		return "Invalid location in index"
 	}
 
