@@ -68,6 +68,30 @@ func main() {
 		if strings.ToLower(input) == "quit" {
 			fmt.Println("Quitting session.")
 			break
+		} else if strings.ToLower(input) == "update" {
+			var tN, colName, change string
+
+			fmt.Print("Enter table name: ")
+			scanner.Scan()
+			tN = scanner.Text()
+
+			fmt.Print("Enter id of entry to update: ")
+			scanner.Scan()
+			sId := scanner.Text()
+			id, err := strconv.Atoi(sId)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			fmt.Print("Enter table column to update: ")
+			scanner.Scan()
+			colName = scanner.Text()
+
+			fmt.Print("Enter your update: ")
+			scanner.Scan()
+			change = scanner.Text()
+
+			cmds.Update(tN, colName, change, id)
 		} else if strings.ToLower(input) == "add table" {
 			var tN string
 			adding := true
@@ -172,6 +196,21 @@ func main() {
 			searchRes := cmds.GeneralSearch(tableName, colName, needle)
 			cmds.PrettyPrint(searchRes)
 
+		} else if strings.ToLower(input) == "delete" {
+			var tableName, colName, needle string
+
+			fmt.Print("Enter name of table to search: ")
+			scanner.Scan()
+			tableName = scanner.Text()
+
+			fmt.Print("Enter name of column to search: ")
+			scanner.Scan()
+			colName = scanner.Text()
+
+			fmt.Print("Enter target to search for: ")
+			scanner.Scan()
+			needle = scanner.Text()
+			cmds.SearchAndDestroy(tableName, colName, needle)
 		} else if strings.ToLower(input) == "id" {
 			var tableName, id string
 

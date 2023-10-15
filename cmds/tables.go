@@ -68,9 +68,9 @@ func CreateTableFile(name string) error {
 	}
 
 	fileName := fmt.Sprintf("./db/tables/%s/%s.json", name, name)
-	cacheName := fmt.Sprintf("./db/tables/%s/%sCache.json", name, name)
+	// cacheName := fmt.Sprintf("./db/tables/%s/%sCache.json", name, name)
 	indexName := fmt.Sprintf("./db/tables/%s/%sIndex.json", name, name)
-	names := []string{fileName, cacheName, indexName}
+	names := []string{fileName, indexName}
 
 	for _, name := range names {
 		file, err := os.Create(name)
